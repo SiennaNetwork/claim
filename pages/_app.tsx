@@ -7,7 +7,7 @@ import { Provider, useStore } from 'react-redux';
 import { wrapper } from '../redux/store';
 import { BreakpointProvider } from '../hooks/breakpoints';
 import { queries } from '../styles/breakpoints';
-import { AppProps } from 'next/dist/next-server/lib/router/router';
+import { AppProps } from 'next/app';
 import StyleProvider from '../components/StyleProvider';
 import Head from '../components/Head';
 
