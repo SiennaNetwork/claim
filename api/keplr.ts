@@ -1,4 +1,4 @@
-import { CosmWasmClient, SigningCosmWasmClient } from 'secretjs';
+import { CosmWasmClient, BroadcastMode } from 'secretjs';
 import { divDecimals, formatWithSixDecimals, toFixedTrunc } from '../utils/numberFormat';
 import {
   unlockToken,
@@ -9,8 +9,9 @@ import {
 } from '../constants';
 import { sleep } from './utils';
 import { Snip20GetBalance } from './snip20';
-const chainId = process.env.CHAIN_ID;
+import { PatchedSigningCosmWasmClient } from '../libs/PatchedSigningCosmWasmClient'
 
+const chainId = process.env.CHAIN_ID;
 export interface Keplr {
   suggestToken: any;
   experimentalSuggestChain: any;
@@ -150,9 +151,6 @@ export const signInKeplr = async () => {
     const secretjsSend = initSecretJS(SECRET_LCD, true, address, chainId);
     const secretjs = initSecretJS(SECRET_LCD, false, address, chainId);
 
-    // window.secretjs = secretjs;
-    // window.secretjsSend = secretjsSend
-
     return { keplrOfflineSigner, address, accounts, secretjs, secretjsSend, chainId };
   } catch (error) {
     console.log('error: ', error);
@@ -168,7 +166,7 @@ const initSecretJS = (
 ) => {
   try {
     const client = isSigner
-      ? new SigningCosmWasmClient(
+      ? new PatchedSigningCosmWasmClient(
         address,
         walletAddress,
         window.getOfflineSigner(chainId),
@@ -182,7 +180,8 @@ const initSecretJS = (
             amount: [{ amount: '500000', denom: 'uscrt' }],
             gas: '500000',
           },
-        }
+        },
+        BroadcastMode.Sync
       )
       : new CosmWasmClient(address);
     return client;
