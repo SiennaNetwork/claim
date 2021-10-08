@@ -148,6 +148,15 @@ const Claim: React.FC<Props> = ({}) => {
     dispatch({ type: CHECK_KEPLR_REQUESTED });
   };
 
+  const goToEarn = () => {
+    const a = document.createElement('a');
+    a.href = 'https://app.sienna.network/swap/earn';
+    a.target = '_blank';
+    a.rel = 'noopener norefferer';
+    a.click();
+    return;
+  };
+
   const checkWindowSize = () => {
     let isMobile: boolean;
     if (breakpoint.md || breakpoint.sm || breakpoint.lg) isMobile = false;
@@ -258,17 +267,9 @@ const Claim: React.FC<Props> = ({}) => {
               </p>
 
               <div style={{ width: '319px', marginBottom: '88px' }}>
-                {/* <ViewSienna
-                  isSwapComplete={afterClaim}
-                  onClick={() => {
-                    return null;
-                  }}
-                >
-                  Visit SiennaSwap{' '}
-                </ViewSienna> */}
-                <span>
-                  <strong>Launching soon</strong>
-                </span>
+                <ViewSienna isSwapComplete={false} onClick={() => goToEarn()}>
+                  Earn SIENNA
+                </ViewSienna>
               </div>
             </ClaimBodyRight>
           ) : (
@@ -368,18 +369,18 @@ const ClaimTopNavBarRight = styled.div<{ $isAuthorized?: boolean }>`
   }
 `;
 
-// const ViewSienna = styled.button<{ isSwapComplete?: boolean }>`
-//   width: 184px;
-//   height: 40px;
-//   border: 1px solid ${defaultColors.white};
-//   background: ${(props) => (props.isSwapComplete ? defaultColors.swapBlue : '#fff')};
-//   color: ${(props) => (props.isSwapComplete ? '#fff' : defaultColors.primary)};
-//   font-size: 14px;
-//   font-weight: 600;
-//   border-radius: 20px;
-//   cursor: pointer;
-//   margin-top: 24px;
-// `;
+const ViewSienna = styled.button<{ isSwapComplete?: boolean }>`
+  width: 184px;
+  height: 40px;
+  border: 1px solid ${defaultColors.white};
+  background: ${(props) => (props.isSwapComplete ? defaultColors.swapBlue : defaultColors.primary)};
+  color: ${(props) => (props.isSwapComplete ? '#fff' : '#fff')};
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 24px;
+`;
 
 const ClaimBodyMobile = styled(Row)`
   margin: 0;
