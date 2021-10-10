@@ -262,8 +262,8 @@ const Claim: React.FC<Props> = ({}) => {
               <h2>Earn more SIENNA</h2>
 
               <p>
-                Remember, you can soon <strong>stake SIENNA</strong> or become a liquidity provider
-                on SiennaSwap, where you can earn even more SIENNA.
+                Remember, you can <strong>stake SIENNA</strong> or become a liquidity provider on
+                SiennaSwap, where you can earn even more SIENNA.
               </p>
 
               <div style={{ width: '319px', marginBottom: '88px' }}>
