@@ -17,7 +17,7 @@ import ConnectWalletButton from '../components/ConnectWalletButton';
 import ConnectWalletView from '../components/ConnectWalletView';
 import ClaimButton from '../components/ClaimButton';
 // import PreLoadIndicator from '../components/PreLoadIndicator';
-// import { FaGithub } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa';
 import { IStore } from '../redux/store';
 import { getFeeForExecute } from '../api/utils';
 
@@ -162,6 +162,15 @@ const Claim: React.FC<Props> = ({}) => {
     if (breakpoint.md || breakpoint.sm || breakpoint.lg) isMobile = false;
     else isMobile = true;
     return isMobile;
+  };
+
+  const goToGithub = () => {
+    const a = document.createElement('a');
+    a.href = 'https://github.com/SiennaNetwork/claim';
+    a.target = '_blank';
+    a.rel = 'noopener norefferer';
+    a.click();
+    return;
   };
 
   return (
@@ -313,6 +322,18 @@ const Claim: React.FC<Props> = ({}) => {
           </div>
         </ClaimSuccessful>
       )}
+
+      <FaGithub
+        onClick={goToGithub}
+        style={{
+          position: 'fixed',
+          bottom: 10,
+          left: 10,
+          width: 35,
+          height: 35,
+          cursor: 'pointer',
+        }}
+      />
     </ClaimContainer>
   );
 };
