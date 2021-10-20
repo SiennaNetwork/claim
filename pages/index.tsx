@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 import React, { useState, useEffect } from 'react';
 import { Row, Col } from 'reactstrap';
 import { useDispatch, useSelector } from 'react-redux';
-import { claimVestedTokens } from '../api/vesting';
+import { claimVestedTokens, queryClaimStatus } from '../api/vesting';
 import { unlockToken } from '../constants';
 import { useBreakpoint } from '../hooks/breakpoints';
 import {
@@ -16,14 +16,16 @@ import NavBarLogo from '../components/NavBarLogo';
 import ConnectWalletButton from '../components/ConnectWalletButton';
 import ConnectWalletView from '../components/ConnectWalletView';
 import ClaimButton from '../components/ClaimButton';
-// import PreLoadIndicator from '../components/PreLoadIndicator';
 import { FaGithub } from 'react-icons/fa';
 import { IStore } from '../redux/store';
 import { getFeeForExecute } from '../api/utils';
+import { divDecimals, formatWithSixDecimals } from '../utils/numberFormat';
 
 interface Props {
   onClickConnectWallet: (e: React.SyntheticEvent) => void;
 }
+
+let count = 0;
 
 const Claim: React.FC<Props> = ({}) => {
   const [showConnectWalletView, setShowConnectWalletView] = useState(false);
@@ -31,6 +33,10 @@ const Claim: React.FC<Props> = ({}) => {
   const [nextButtonLoading, setNextButtonLoading] = useState(false);
   const [afterClaim, setAfterClaim] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+
+  const [isCheckingData, setIsCheckingData] = useState(true);
+  const [claimData, setClaimData] = useState(undefined);
+  const [claimButtonText, setClaimButtonText] = useState('Checking...');
 
   const user = useSelector((state: IStore) => state.user);
   const breakpoint = useBreakpoint();
@@ -54,7 +60,12 @@ const Claim: React.FC<Props> = ({}) => {
     if (user.secretjs && user.isKeplrInstalled) {
       setShowConnectWalletView(false);
     }
-  }, [user.secretjs, user.isKeplrInstalled]);
+
+    if (user.secretjs && user.selectedWalletAddress && count === 0) {
+      getClaimStatus();
+      count++;
+    }
+  }, [user.secretjs, user.isKeplrInstalled, user.selectedWalletAddress]);
 
   useEffect(() => {
     if (user && user.isKeplrAuthorized && showConnectWalletView) {
@@ -62,6 +73,30 @@ const Claim: React.FC<Props> = ({}) => {
       setShowSwapAccountDrawer(false);
     }
   }, [user, showConnectWalletView]);
+
+  const getClaimStatus = async () => {
+    try {
+      setIsCheckingData(true);
+      setClaimButtonText('Checking...');
+
+      const unixTime = Math.floor(Date.now() / 1000);
+      const res = await queryClaimStatus(user.secretjs, unixTime, user.selectedWalletAddress);
+
+      setIsCheckingData(false);
+      setClaimButtonText('Claim');
+
+      if (res.error && res.error.msg && res.error.msg.includes('The vesting has not yet begun')) {
+        setErrorMessage('Vesting has not begun');
+      } else {
+        setClaimData(res.progress);
+      }
+    } catch (error) {
+      setIsCheckingData(false);
+      setClaimButtonText('Error checking');
+
+      console.log('error: ', error);
+    }
+  };
 
   const onClickUnlockToken = (e: React.SyntheticEvent) => {
     e.stopPropagation();
@@ -94,6 +129,8 @@ const Claim: React.FC<Props> = ({}) => {
     setNextButtonLoading(true);
 
     try {
+      setClaimButtonText('Claiming...');
+
       await claimVestedTokens(
         user.secretjsSend,
         process.env.MGMT_CONTRACT,
@@ -111,9 +148,14 @@ const Claim: React.FC<Props> = ({}) => {
       setNextButtonLoading(false);
       setAfterClaim(true);
 
+      setClaimButtonText('Claim');
+
       notify.success(`Successfully claimed SIENNA tokens`, 4.5);
     } catch (error) {
       console.log('Message', error.message);
+
+      setClaimButtonText('Claim');
+      setNextButtonLoading(false);
 
       if (error.message.includes('Nothing to claim right now')) {
         notify.error(`Nothing to claim right now`, 10, 'Error');
@@ -122,9 +164,6 @@ const Claim: React.FC<Props> = ({}) => {
       } else {
         notify.error(`Error claiming SIENNA tokens`, 4.5, 'Error', JSON.stringify(error.message));
       }
-
-      console.log('Error claiming', error);
-      setNextButtonLoading(false);
     }
   };
 
@@ -173,6 +212,18 @@ const Claim: React.FC<Props> = ({}) => {
     return;
   };
 
+  const shouldClaimButtonEnable = () => {
+    if (isCheckingData || !claimData) {
+      return false;
+    }
+
+    if (claimData && Number(claimData.unlocked) - Number(claimData.claimed) > 0) {
+      return true;
+    }
+
+    return false;
+  };
+
   return (
     <ClaimContainer>
       {checkWindowSize() && (
@@ -193,7 +244,6 @@ const Claim: React.FC<Props> = ({}) => {
           {user.isKeplrAuthorized ? (
             <ClaimTopNavBarRight $isAuthorized={user.isKeplrAuthorized}>
               <span>Balance:</span>
-              {/* <PreLoadIndicator height={14} containerStyle={{}} /> */}
               <UnlockTokenButton onClick={onClickUnlockToken} isUnlock={isUnlock}>
                 {renderBalanceSIENNA()}
               </UnlockTokenButton>
@@ -221,17 +271,15 @@ const Claim: React.FC<Props> = ({}) => {
           <ClaimBodyLeft xs="12" sm="12" md="12" lg="6" xl="6" $isKeplr={user.isKeplrAuthorized}>
             <h1>Claim your SIENNA</h1>
 
-            {false && <h5>Before you can continue you need SCRT in your wallet.</h5>}
-
             {user.isKeplrAuthorized ? (
               <ClaimButton
-                text={nextButtonLoading ? 'Claiming...' : 'Claim Now'}
+                text={claimButtonText}
                 icon={!nextButtonLoading && '/icons/arrow-forward-light.svg'}
                 fontSize={nextButtonLoading ? '12px' : '14px'}
                 width="16.64"
                 height="16"
                 onClick={onClickClaimNow}
-                disabled={false}
+                disabled={!shouldClaimButtonEnable()}
                 prefixIcon={nextButtonLoading}
               />
             ) : (
@@ -248,6 +296,48 @@ const Claim: React.FC<Props> = ({}) => {
                 }}
               />
             )}
+
+            <div style={{ fontSize: 12, marginTop: 10 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: 320,
+                  marginBottom: 0,
+                }}
+              >
+                <p>Available to claim</p>
+
+                <p>
+                  {isCheckingData
+                    ? 'Loading...'
+                    : claimData
+                    ? `${formatWithSixDecimals(
+                        divDecimals(Number(claimData.unlocked) - Number(claimData.claimed), 18)
+                      )} SIENNA`
+                    : ''}
+                </p>
+              </div>
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  width: 320,
+                  marginTop: 0,
+                }}
+              >
+                <p>Claimed in total</p>
+                <p>
+                  {isCheckingData
+                    ? 'Loading...'
+                    : claimData
+                    ? `${formatWithSixDecimals(divDecimals(claimData.claimed, 18))} SIENNA`
+                    : ''}
+                </p>
+              </div>
+            </div>
+
+            {!isCheckingData && !claimData && errorMessage && <p>{errorMessage}</p>}
 
             <p style={{ marginTop: '24px' }}>
               If you participated in the private sale for Sienna, you can claim your SIENNA tokens

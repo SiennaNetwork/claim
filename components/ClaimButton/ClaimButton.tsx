@@ -63,7 +63,7 @@ const ClaimBtn = styled.button<{
   }
 
   &:hover {
-    opacity: 0.75;
+    opacity: ${(props) => (props.disabled ? 1 : 0.75)};
   }
 
   :focus {
