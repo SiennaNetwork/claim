@@ -31,7 +31,6 @@ const Claim: React.FC<Props> = ({}) => {
   const [showConnectWalletView, setShowConnectWalletView] = useState(false);
   const [showSwapAccountDrawer, setShowSwapAccountDrawer] = useState(false);
   const [nextButtonLoading, setNextButtonLoading] = useState(false);
-  const [afterClaim, setAfterClaim] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const [isCheckingData, setIsCheckingData] = useState(true);
@@ -146,7 +145,6 @@ const Claim: React.FC<Props> = ({}) => {
         },
       });
       setNextButtonLoading(false);
-      setAfterClaim(true);
 
       setClaimButtonText('Claim');
 
@@ -165,11 +163,6 @@ const Claim: React.FC<Props> = ({}) => {
         notify.error(`Error claiming SIENNA tokens`, 4.5, 'Error', JSON.stringify(error.message));
       }
     }
-  };
-
-  const onClickCloseClaimNow = () => {
-    setNextButtonLoading(false);
-    setAfterClaim(false);
   };
 
   const connectKeplr = async () => {
@@ -389,30 +382,6 @@ const Claim: React.FC<Props> = ({}) => {
         </ClaimBodyMobile>
       )}
 
-      {afterClaim && (
-        <ClaimSuccessful>
-          <ClaimCloseButton>
-            <Img onClick={onClickCloseClaimNow} src="/icons/close-icon-light.svg" alt="close" />
-          </ClaimCloseButton>
-
-          <div>
-            <h4>Success!</h4>
-            <p>You have just Claimed your SIENNA</p>
-            <button>
-              View transaction
-              <Img src="/icons/top-right-icon-dark.svg" alt="go to" />
-            </button>
-
-            <div></div>
-
-            <span>
-              This Claim was done with complete privacy. No one can see the transaction on the
-              blockchain. <i>Sienna</i>
-            </span>
-          </div>
-        </ClaimSuccessful>
-      )}
-
       <FaGithub
         onClick={goToGithub}
         style={{
@@ -429,8 +398,6 @@ const Claim: React.FC<Props> = ({}) => {
 };
 
 export default Claim;
-
-const Img = styled.img``;
 
 const ClaimContainer = styled.div`
   padding: 0;
@@ -696,87 +663,6 @@ const DisconnectWalletButton = styled.div<{ isUnlock?: boolean }>`
   -moz-user-select: none;
   -o-user-select: none;
   user-select: none;
-`;
-
-const ClaimSuccessful = styled.div`
-  width: 216px;
-  height: 298px;
-  position: absolute;
-  bottom: 0px;
-  right: 0;
-  background: ${defaultColors.dark};
-  margin: 0;
-  padding: 12px 10px 0 10px;
-
-  > div {
-    padding: 0 14px;
-
-    > div {
-      margin: 24px 0 24px 0px;
-      height: 1px;
-      background: ${defaultColors.blackStone70};
-      width: 100%;
-    }
-  }
-
-  > div > h4 {
-    color: #fff;
-    font-size: 16px;
-    font-weight: bold;
-  }
-
-  > div > p {
-    font-size: 12px;
-    color: #fff;
-    margin-bottom: 16px;
-    line-height: 20px;
-  }
-
-  > div > span {
-    font-size: 12px;
-    color: #fff;
-    line-height: 16px;
-  }
-
-  > div > button {
-    background: ${defaultColors.white};
-    color: ${defaultColors.blackStone80};
-    border-radius: 12px;
-    width: 137px;
-    height: 24px;
-    font-size: 12px;
-    border: none;
-    outline: none;
-    margin-bottom: 0px;
-    line-height: 14.52px;
-
-    > img {
-      width: 6px;
-      height: 6px;
-      margin-left: 5px;
-      margin-bottom: 2px;
-    }
-  }
-
-  > div > span {
-    font-size: 12px;
-    color: #fff;
-    margin-top: 0px;
-    display: inline-block;
-    width: 135px;
-  }
-`;
-
-const ClaimCloseButton = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: flex-end;
-  padding: 0 !important;
-
-  > img {
-    cursor: pointer;
-    width: 20px;
-  }
 `;
 
 const ErrorText = styled.div`
