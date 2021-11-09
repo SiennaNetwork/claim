@@ -31,7 +31,6 @@ const Claim: React.FC<Props> = ({}) => {
   const [showConnectWalletView, setShowConnectWalletView] = useState(false);
   const [showSwapAccountDrawer, setShowSwapAccountDrawer] = useState(false);
   const [nextButtonLoading, setNextButtonLoading] = useState(false);
-  const [afterClaim, setAfterClaim] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
   const [isCheckingData, setIsCheckingData] = useState(true);
@@ -146,7 +145,6 @@ const Claim: React.FC<Props> = ({}) => {
         },
       });
       setNextButtonLoading(false);
-      setAfterClaim(true);
 
       setClaimButtonText('Claim');
 
@@ -165,11 +163,6 @@ const Claim: React.FC<Props> = ({}) => {
         notify.error(`Error claiming SIENNA tokens`, 4.5, 'Error', JSON.stringify(error.message));
       }
     }
-  };
-
-  const onClickCloseClaimNow = () => {
-    setNextButtonLoading(false);
-    setAfterClaim(false);
   };
 
   const connectKeplr = async () => {
@@ -389,30 +382,6 @@ const Claim: React.FC<Props> = ({}) => {
         </ClaimBodyMobile>
       )}
 
-      {afterClaim && (
-        <ClaimSuccessful>
-          <ClaimCloseButton>
-            <Img onClick={onClickCloseClaimNow} src="/icons/close-icon-light.svg" alt="close" />
-          </ClaimCloseButton>
-
-          <div>
-            <h4>Success!</h4>
-            <p>You have just Claimed your SIENNA</p>
-            <button>
-              View transaction
-              <Img src="/icons/top-right-icon-dark.svg" alt="go to" />
-            </button>
-
-            <div></div>
-
-            <span>
-              This Claim was done with complete privacy. No one can see the transaction on the
-              blockchain. <i>Sienna</i>
-            </span>
-          </div>
-        </ClaimSuccessful>
-      )}
-
       <FaGithub
         onClick={goToGithub}
         style={{
@@ -429,8 +398,6 @@ const Claim: React.FC<Props> = ({}) => {
 };
 
 export default Claim;
-
-const Img = styled.img``;
 
 const ClaimContainer = styled.div`
   padding: 0;
