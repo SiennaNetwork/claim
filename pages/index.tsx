@@ -79,12 +79,7 @@ const Claim: React.FC<Props> = ({}) => {
       setClaimButtonText('Checking...');
 
       const unixTime = Math.floor(Date.now() / 1000);
-      const res = await queryClaimStatus(
-        user.secretjs,
-        unixTime,
-        'secret1tpqxyxhfg9ay5ce25mq2l3atwywgc7jmrelhys'
-      );
-      // const res = await queryClaimStatus(user.secretjs, unixTime, user.selectedWalletAddress);
+      const res = await queryClaimStatus(user.secretjs, unixTime, user.selectedWalletAddress);
 
       setIsCheckingData(false);
       setClaimButtonText('Claim');
