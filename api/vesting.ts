@@ -22,3 +22,7 @@ export const queryClaimStatus = (secretjs: CosmWasmClient, unixTime: number, add
   }
   );
 };
+
+
+// secretcli q compute query secret1kn6kvc97nvu69dqten0w9p9e95dw6d6luv3dfx '{"progress": {"address": "secret1tpqxyxhfg9ay5ce25mq2l3atwywgc7jmrelhys", "time": "1637408692"}}'
+
