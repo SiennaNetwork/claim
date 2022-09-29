@@ -6011,10 +6011,10 @@ scroll-into-view-if-needed@^2.2.25:
   dependencies:
     compute-scroll-into-view "^1.0.17"
 
-secretjs@0.17.0-beta.4:
-  version "0.17.0-beta.4"
-  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-0.17.0-beta.4.tgz#9a71642ffaac46bf59b0b6ef511ace3a90c44344"
-  integrity sha512-sMWIAE9rdOn9Gd4eNjf5pwt3BW+8Kg/EJfYAcidluEwBfhtpxibQbbtaQXcLYi4VTXIxX+OpfV4KAy4+VUQpEw==
+secretjs@0.17.5:
+  version "0.17.5"
+  resolved "https://registry.yarnpkg.com/secretjs/-/secretjs-0.17.5.tgz#5b55e46cfa2719714831fc2019e21c21959fe587"
+  integrity sha512-sf0+Je9KIEMQr/wJOgeqyBOV0ruiMNHSwP4L2vXiJbtzJWQqyVHyPkpavAhruNZ+91XlSzAFP2X5MPxqPBC9fQ==
   dependencies:
     "@iov/crypto" "2.1.0"
     "@iov/encoding" "2.1.0"

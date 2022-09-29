@@ -133,7 +133,7 @@ const Claim: React.FC<Props> = ({}) => {
       await claimVestedTokens(
         user.secretjsSend,
         process.env.MGMT_CONTRACT,
-        getFeeForExecute(300_000)
+        getFeeForExecute(600_000)
       );
 
       dispatch({ type: CHECK_KEPLR_REQUESTED });
